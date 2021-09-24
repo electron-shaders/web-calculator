@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"./stack"
+	"github.com/electron-shaders/web-calculator/backend/stack"
 )
 
 var (
