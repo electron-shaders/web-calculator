@@ -1,3 +1,4 @@
+//TODO: 检测负数
 //TODO: 支持小数
 
 package main
@@ -15,7 +16,6 @@ import (
 )
 
 var (
-	defaultVal          int = 0
 	origExp             []string
 	parsedExp           string
 	parser              stack.StringStack
@@ -107,13 +107,10 @@ func main() {
 	var parsedExp []string
 	for i := 0; i < len(origExp); i++ {
 		if oplv(origExp[i]) == -1 {
-			if origExp[i] == "" {
-				parsedExp = append(parsedExp, strconv.Itoa(defaultVal))
-				if !isWarnedEmptyNumber {
-					println()
-					fmt.Printf("警告: 表达式不完整(缺省值：%d)\n", defaultVal)
-					isWarnedEmptyNumber = true
-				}
+			if origExp[i] == "" && !isWarnedEmptyNumber {
+				println()
+				fmt.Println("警告: 表达式不完整(缺省值：0)")
+				isWarnedEmptyNumber = true
 			} else {
 				parsedExp = append(parsedExp, string(origExp[i]))
 			}
