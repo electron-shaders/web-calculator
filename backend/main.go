@@ -1,5 +1,6 @@
 //TODO: 检测负数
 //TODO: 支持小数
+//FIXME: 操作数过长
 
 package main
 
@@ -131,8 +132,14 @@ func calc() (int, error) {
 		if oplv(parsedExp[i]) == -1 {
 			parser.Push(parsedExp[i])
 		} else {
-			x, _ := strconv.Atoi(parser.Pop())
-			y, _ := strconv.Atoi(parser.Pop())
+			x, err := strconv.Atoi(parser.Pop())
+			if err != nil {
+				return 0, errors.New("操作数过大")
+			}
+			y, err := strconv.Atoi(parser.Pop())
+			if err != nil {
+				return 0, errors.New("操作数过大")
+			}
 			switch parsedExp[i] {
 			case "+":
 				parser.Push(strconv.Itoa(y + x))
@@ -149,11 +156,11 @@ func calc() (int, error) {
 			}
 		}
 	}
-	ans, err := strconv.Atoi(parser.Pop())
-	if err != nil {
+	if ans, err := strconv.Atoi(parser.Pop()); err != nil {
 		panic(err)
+	} else {
+		return ans, nil
 	}
-	return ans, nil
 }
 
 func main() {

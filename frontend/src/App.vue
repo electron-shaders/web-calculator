@@ -5,17 +5,33 @@
       <el-tab-pane label="键盘模式" name="keyboard"></el-tab-pane>
     </el-tabs>
     <router-view @calc="calc" />
-    <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.png"></el-empty>
+    <div v-if="ansHistory.length !== 0" id="history">
+      <el-table :data="ansHistory" stripe style="width: 100%">
+        <el-table-column type="selection" width="auto" />
+        <el-table-column prop="correctedExp" label="修正表达式" width="auto" />
+        <el-table-column prop="answer" label="结果" width="auto" />
+        <el-table-column fixed="right" label="操作" width="auto">
+          <template #default="scope">
+            <el-button type="primary" icon="el-icon-document-copy" >复制结果</el-button>
+            <el-button type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div v-else>
+      <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.png"></el-empty>
+    </div>
   </div>
 </template>
 
 <style>
 .demo {
   position: absolute;
+  font-size: 15px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 28%;
+  width: 40%;
   border: 2px solid grey;
   border-width: auto;
   border-radius: 10px;
@@ -34,25 +50,29 @@ export default {
   data() {
     return {
       mode: "keyboard",
-      origExp: "",
-      errorMsg: "",
-      correctedExp: "",
-      answer: NaN,
+      ansHistory: [],
     };
   },
   methods: {
     calc(newExp) {
       message.clear();
-      this.origExp = newExp.origExp;
-      var data = { "orig-exp": this.origExp };
+      let errorMsg = "";
+      let correctedExp = "";
+      let answer = NaN;
+      let data = { "orig-exp": newExp.origExp };
+      let ansHistory = this.ansHistory;
       console.log(data);
-      var resHandler = function(result){
-        this.errorMsg = result["error-msg"];
-        this.correctedExp = result["corrected-exp"];
-        this.answer = result["answer"];
+      let resHandler = function(result){
+        errorMsg = result["error-msg"];
+        correctedExp = result["corrected-exp"];
+        answer = result["answer"];
         console.log(result);
-        if (this.errorMsg !== "") {
-          message.warning(`${this.errorMsg}`);
+        if (errorMsg !== "") {
+          message.warning(`${errorMsg}`);
+        } else {
+          console.log(this.ansHistory);
+          ansHistory.push({correctedExp:correctedExp,answer:answer});
+          this.ansHistory=ansHistory;
         }
       };
       axios.post({
@@ -64,6 +84,9 @@ export default {
         success: resHandler,
       });
     },
+    handleDelete(index) {
+      this.ansHistory.splice(index, 1);
+    }
   },
   watch: {
     mode(newMode) {
