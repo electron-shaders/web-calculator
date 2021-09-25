@@ -18,7 +18,7 @@ import (
 type ResData struct {
 	Answer       int    `json:"answer"`
 	CorrectedExp string `json:"corrected-exp"`
-	Error        string `json:"error"`
+	Error        string `json:"error-msg"`
 }
 
 func (res *ResData) clear() {
@@ -39,10 +39,8 @@ var (
 )
 
 func findIndOfOps(orig string) ([][]int, error) {
-	if regexp.MustCompile(`[a-zA-Z]`).MatchString(orig) {
-		return nil, errors.New("the expression cannot contain letter(s)")
-	} else if regexp.MustCompile(`[^\+\-\*/\(\)0-9]`).MatchString(orig) {
-		return nil, errors.New("the expression contains invalid character(s)")
+	if regexp.MustCompile(`[^\+\-\*/\(\)0-9]`).MatchString(orig) {
+		return nil, errors.New("表达式包含非法字符")
 	}
 	return regexp.MustCompile(`(\+|\-|\*|/|\(|\))`).FindAllStringIndex(orig, -1), nil
 }
@@ -62,7 +60,10 @@ func oplv(op string) int {
 
 func preParse(tmp string) error {
 	var tot int
-	temp := strings.Replace(string(tmp), " ", "", -1)
+	if len(tmp) == 0 {
+		return errors.New("表达式不可为空")
+	}
+	temp := strings.Replace(tmp, " ", "", -1)
 	temp = strings.Replace(temp, "\n", "", -1)
 	res.CorrectedExp = temp
 	fmt.Println("修正结果:", temp)
@@ -141,7 +142,7 @@ func calc() (int, error) {
 				parser.Push(strconv.Itoa(y * x))
 			case "/":
 				if x == 0 {
-					return 0, errors.New("the divider cannot be zero")
+					return 0, errors.New("除数不可为 0")
 				} else {
 					parser.Push(strconv.Itoa(y / x))
 				}
@@ -175,7 +176,8 @@ func process(w http.ResponseWriter, request *http.Request) {
 		fmt.Println("错误:", err)
 		res.Error = err.Error()
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.WriteHeader(http.StatusOK)
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)
@@ -184,7 +186,8 @@ func process(w http.ResponseWriter, request *http.Request) {
 		fmt.Println("错误:", err)
 		res.Error = err.Error()
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.WriteHeader(http.StatusOK)
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)
@@ -193,7 +196,8 @@ func process(w http.ResponseWriter, request *http.Request) {
 		fmt.Println("计算结果:", ans)
 		res.Answer = ans
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.WriteHeader(http.StatusOK)
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)

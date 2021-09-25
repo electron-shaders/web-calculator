@@ -5,7 +5,6 @@
       <el-tab-pane label="Keyboard" name="keyboard"></el-tab-pane>
     </el-tabs>
     <router-view @calc="calc" />
-    {{ origExp }}
   </div>
 </template>
 
@@ -27,14 +26,15 @@
 
 <script>
 import router from "./router";
-import axios from "axios"
+import axios from "./utils/axios";
+import message from "./utils/message";
 export default {
   name: "app",
   data() {
     return {
       mode: "keyboard",
       origExp: "",
-      error: "",
+      errorMsg: "",
       correctedExp: "",
       answer: NaN,
     };
@@ -44,28 +44,30 @@ export default {
       this.origExp = newExp.origExp;
       var data = { "orig-exp": this.origExp };
       console.log(data);
-      axios({
-        method: "POST",
-        url: "http://127.0.0.1:3001/process",
+      var resHandler = function(result){
+        this.errorMsg = result["error-msg"];
+        this.correctedExp = result["corrected-exp"];
+        this.answer = result["answer"];
+        console.log(result);
+        if (this.errorMsg !== "") {
+          message.warning(`${this.errorMsg}`);
+        }
+      };
+      axios.post({
+        url: "http://localhost:3001/process",
         data: data,
-        headers: { "content-type": "text/plain" },
-      })
-        .then((result) => {
-          this.error = result.data["error"];
-          this.correctedExp = result.data["corrected-exp"];
-          this.answer = result.data["answer"];
-          console.log(result.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        loading: false,
+        timeout: 100,
+        confirm: false,
+        success: resHandler,
+      });
     },
   },
   watch: {
     mode(newMode) {
       router.push({ name: `${newMode}` });
       this.origExp = "";
-      this.error = "";
+      this.errorMsg = "";
       this.correctedExp = "";
       this.answer = NaN;
     },

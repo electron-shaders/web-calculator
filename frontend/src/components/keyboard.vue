@@ -3,7 +3,7 @@
         <link rel="stylesheet" href="../iconfont.css">
         <el-input v-model="origExp" autosize type="text" placeholder="Please input an expression">
             <template #append>
-                <el-button type="primary" @click="this.$emit('calc',{origExp})">
+                <el-button type="primary" @click="this.$emit('calc',{origExp}); origExp=''">
                     <span class="iconfont el-icon-third-calculator" style="vertical-align: middle;"> 计算 </span>                
                 </el-button>
             </template>
