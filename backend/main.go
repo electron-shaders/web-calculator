@@ -4,10 +4,10 @@
 package main
 
 import (
-	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,18 +15,28 @@ import (
 	"github.com/electron-shaders/web-calculator/backend/stack"
 )
 
+type ResData struct {
+	Answer       int    `json:"answer"`
+	CorrectedExp string `json:"corrected-exp"`
+	Error        error  `json:"error"`
+}
+
+type ReqData struct {
+	Tmp string `json:"orig-exp"`
+}
+
 var (
-	origExp             []string
-	parsedExp           string
-	parser              stack.StringStack
-	isWarnedEmptyNumber bool
+	res       ResData
+	origExp   []string
+	parsedExp string
+	parser    stack.StringStack
 )
 
 func findIndOfOps(orig string) ([][]int, error) {
 	if regexp.MustCompile(`[a-zA-Z]`).MatchString(orig) {
-		return nil, errors.New("表达式中不可包含字母")
+		return nil, errors.New("the expression cannot contain letter(s)")
 	} else if regexp.MustCompile(`[^\+\-\*/\(\)0-9]`).MatchString(orig) {
-		return nil, errors.New("表达式中包含非法字符")
+		return nil, errors.New("the expression contains invalid character(s)")
 	}
 	return regexp.MustCompile(`(\+|\-|\*|/|\(|\))`).FindAllStringIndex(orig, -1), nil
 }
@@ -44,34 +54,16 @@ func oplv(op string) int {
 	}
 }
 
-func init() {
+func preParse(tmp string) error {
 	var tot int
-	//tmp := "+-*"
-	print("请输入一个表达式(不支持小数，仅支持四则运算): ")
-	reader := bufio.NewReader(os.Stdin)
-	tmp, _, err := reader.ReadLine()
-oserror:
-	for err != nil {
-		println()
-		fmt.Println("错误:", err)
-		print("请输入一个表达式(不支持小数，仅支持四则运算): ")
-		tmp, _, err = reader.ReadLine()
-	}
 	temp := strings.Replace(string(tmp), " ", "", -1)
 	temp = strings.Replace(temp, "\n", "", -1)
+	res.CorrectedExp = temp
 	fmt.Println("修正结果:", temp)
 	indexs, err := findIndOfOps(temp)
-	for err != nil {
-		println()
-		fmt.Println("错误:", err)
-		print("请输入一个表达式(不支持小数，仅支持四则运算): ")
-		tmp, _, err = reader.ReadLine()
-		if err != nil {
-			goto oserror
-		}
-		temp = strings.Replace(string(tmp), " ", "", -1)
-		temp = strings.Replace(temp, "\n", "", -1)
-		indexs, err = findIndOfOps(temp)
+	if err != nil {
+		res.Error = err
+		return err
 	}
 	if len(indexs) > 0 {
 		for i := 0; i < len(temp); i++ {
@@ -99,21 +91,15 @@ oserror:
 			parsedExp += string(temp[i])
 		}
 	}
+	return nil
 }
 
-func main() {
-	defer handlePanic()
+func calc() (int, error) {
 	origExp = strings.Split(parsedExp, " ")
 	var parsedExp []string
 	for i := 0; i < len(origExp); i++ {
 		if oplv(origExp[i]) == -1 {
-			if origExp[i] == "" && !isWarnedEmptyNumber {
-				println()
-				fmt.Println("警告: 表达式不完整(缺省值：0)")
-				isWarnedEmptyNumber = true
-			} else {
-				parsedExp = append(parsedExp, string(origExp[i]))
-			}
+			parsedExp = append(parsedExp, string(origExp[i]))
 		} else {
 			if origExp[i] == ")" {
 				for parser.Top() != "(" {
@@ -149,7 +135,7 @@ func main() {
 				parser.Push(strconv.Itoa(y * x))
 			case "/":
 				if x == 0 {
-					panic("除数为0")
+					return 0, errors.New("the divider cannot be zero")
 				} else {
 					parser.Push(strconv.Itoa(y / x))
 				}
@@ -160,14 +146,57 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("计算结果:", ans)
+	return ans, nil
 }
 
-func handlePanic() {
+func main() {
+	defer panicHandler()
+	http.HandleFunc("/", process)
+	http.ListenAndServe(":3001", nil)
+}
+
+func process(w http.ResponseWriter, request *http.Request) {
+	decoder := json.NewDecoder(request.Body)
+	var req ReqData
+	if err := decoder.Decode(&req); err != nil {
+		panic(err)
+	}
+
+	if err := preParse(req.Tmp); err != nil {
+		fmt.Println("错误:", err)
+		res.Error = err
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusBadRequest)
+		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
+			panic(jsonErr)
+		}
+	}
+
+	if ans, err := calc(); err != nil {
+		fmt.Println("错误:", err)
+		res.Error = err
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusBadRequest)
+		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
+			panic(jsonErr)
+		}
+	} else {
+		fmt.Println("计算结果:", ans)
+		res.Answer = ans
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
+			panic(jsonErr)
+		}
+	}
+}
+
+func panicHandler() {
 	err := recover()
 	if err != nil {
-		println()
-		fmt.Println("致命错误:", err)
-		fmt.Println("程序已中止...")
+		fmt.Println("Panic:", err)
 	}
 }

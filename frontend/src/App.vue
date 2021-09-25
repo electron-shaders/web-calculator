@@ -1,12 +1,11 @@
 <template>
   <div class="demo">
-    <el-tabs v-model="currentPage">
-      <el-tab-pane label="Home" name="home"></el-tab-pane>
-      <el-tab-pane label="Demo" name="demo"></el-tab-pane>
+    <el-tabs v-model="mode">
+      <el-tab-pane label="Normal" name="normal"></el-tab-pane>
+      <el-tab-pane label="Keyboard" name="keyboard"></el-tab-pane>
     </el-tabs>
-    <router-view/>
-    <p class="log">{{ storeLog }}</p>
-    <p class="log">{{ axiosLog }}</p>
+    <router-view @calc="calc"/>
+    {{origExp}}
   </div>
 </template>
 
@@ -16,6 +15,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 60%;
   border: 2px solid grey;
   border-width: auto;
   border-radius: 10px;
@@ -23,41 +23,33 @@
   vertical-align: middle;
   text-align: center;
 }
-.log {
-  text-align: left;
-  color: white;
-  padding: 3px;
-  padding-left: 4px;
-  border-left: 4px solid darkgrey;
-  background-color: grey;
-}
 </style>
 
 <script>
-import { send } from "./api/app"
 import router from "./router"
 export default {
-  name: "app",
+  name: 'app',
   data() {
     return {
-      answer: "",
-      currentPage: "home",
-      storeLog: "store>>> " + this.$store.state.app
+      mode: "keyboard",
+      origExp:"",
+      error:"",
+      correctedExp:"",
+      answer:NaN
     }
   },
-  computed: {
-    axiosLog() {
-      return "res from https://yesno.wtf/api>>> " + this.answer;
+  methods:{
+    calc(newExp){
+      this.origExp=newExp.origExp
     }
   },
   watch:{
-    currentPage(newPage,oldPage){
-      router.push({name:`${newPage}`})
+    mode(newMode){
+      router.push({name:`${newMode}`})
     }
   },
-  async mounted() {
-    const res = await send();
-    this.answer = res.answer;
-  }
+  mounted() {
+    router.push({name: "keyboard"})
+  },
 }
 </script>
