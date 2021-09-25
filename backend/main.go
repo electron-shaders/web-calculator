@@ -18,7 +18,13 @@ import (
 type ResData struct {
 	Answer       int    `json:"answer"`
 	CorrectedExp string `json:"corrected-exp"`
-	Error        error  `json:"error"`
+	Error        string `json:"error"`
+}
+
+func (res *ResData) clear() {
+	res.Answer = 0
+	res.CorrectedExp = ""
+	res.Error = ""
 }
 
 type ReqData struct {
@@ -62,7 +68,7 @@ func preParse(tmp string) error {
 	fmt.Println("修正结果:", temp)
 	indexs, err := findIndOfOps(temp)
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return err
 	}
 	if len(indexs) > 0 {
@@ -150,12 +156,15 @@ func calc() (int, error) {
 }
 
 func main() {
-	defer panicHandler()
 	http.HandleFunc("/", process)
 	http.ListenAndServe(":3001", nil)
 }
 
 func process(w http.ResponseWriter, request *http.Request) {
+	parser.Clear()
+	res.clear()
+	origExp = nil
+	parsedExp = ""
 	decoder := json.NewDecoder(request.Body)
 	var req ReqData
 	if err := decoder.Decode(&req); err != nil {
@@ -164,21 +173,19 @@ func process(w http.ResponseWriter, request *http.Request) {
 
 	if err := preParse(req.Tmp); err != nil {
 		fmt.Println("错误:", err)
-		res.Error = err
+		res.Error = err.Error()
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)
 		}
-	}
-
-	if ans, err := calc(); err != nil {
+	} else if ans, err := calc(); err != nil {
 		fmt.Println("错误:", err)
-		res.Error = err
+		res.Error = err.Error()
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)
 		}
@@ -191,12 +198,5 @@ func process(w http.ResponseWriter, request *http.Request) {
 		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
 			panic(jsonErr)
 		}
-	}
-}
-
-func panicHandler() {
-	err := recover()
-	if err != nil {
-		fmt.Println("Panic:", err)
 	}
 }
