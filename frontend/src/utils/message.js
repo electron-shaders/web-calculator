@@ -1,5 +1,9 @@
 import {ElMessageBox, ElMessage} from 'element-plus'
 
+const clear = () => {
+    ElMessage.closeAll()
+}
+
 /**
  * 消息提示
  * @param msg 提示信息
@@ -87,4 +91,5 @@ export default {
     warning,
     alert,
     confirm,
+    clear,
 }

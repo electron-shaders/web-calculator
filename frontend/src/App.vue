@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     calc(newExp) {
+      message.clear();
       this.origExp = newExp.origExp;
       var data = { "orig-exp": this.origExp };
       console.log(data);
