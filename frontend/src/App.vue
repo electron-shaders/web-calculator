@@ -1,10 +1,11 @@
 <template>
   <div class="demo">
     <el-tabs v-model="mode">
-      <el-tab-pane label="Normal" name="normal"></el-tab-pane>
-      <el-tab-pane label="Keyboard" name="keyboard"></el-tab-pane>
+      <el-tab-pane label="标准模式" name="normal"></el-tab-pane>
+      <el-tab-pane label="键盘模式" name="keyboard"></el-tab-pane>
     </el-tabs>
     <router-view @calc="calc" />
+    <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.png"></el-empty>
   </div>
 </template>
 

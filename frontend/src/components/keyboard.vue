@@ -1,7 +1,7 @@
 <template>
     <div id="orig-exp-textarea">
         <link rel="stylesheet" href="../iconfont.css">
-        <el-input v-model="origExp" autosize type="text" placeholder="Please input an expression">
+        <el-input v-model="origExp" autosize type="text" placeholder="请输入一个表达式......">
             <template #append>
                 <el-button type="primary" @click="this.$emit('calc',{origExp}); origExp=''">
                     <span class="iconfont el-icon-third-calculator" style="vertical-align: middle;"> 计算 </span>                
