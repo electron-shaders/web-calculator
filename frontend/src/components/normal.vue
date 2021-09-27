@@ -1,8 +1,17 @@
 <template>
-    <div>
-        Normal mode 未完成
+    <div id="exp-container">
+        
     </div>
 </template>
+
+<style>
+#exp-container{
+    height: 16%;
+    border: 2px solid grey;
+    border-width: auto;
+    border-radius: 10px;;
+}
+</style>
 
 <script>
 export default {
