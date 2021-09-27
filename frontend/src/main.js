@@ -5,10 +5,12 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import store from './store/index'
 import router from './router/index'
 import App from './App.vue'
+import VueClipboard from 'vue-clipboard2'
 import './assets/icons/iconfont.css'
 
 const app = createApp(App)
 app.use(ElementPlus,{locale: zhCn})
 app.use(router)
 app.use(store)
+app.use(VueClipboard)
 app.mount('#app')
