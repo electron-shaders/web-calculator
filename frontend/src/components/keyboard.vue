@@ -1,5 +1,5 @@
 <template>
-    <div id="orig-exp-textarea">
+    <div>
         <el-input ref="input-box" v-model="origExp" @keyup.enter.native="this.$emit('calc',{origExp}); origExp=''" autosize type="text" placeholder="请输入一个表达式......">
             <template #append>
                 <el-button type="primary" @click="this.$emit('calc',{origExp}); origExp=''">
@@ -9,6 +9,12 @@
         </el-input>
     </div>
 </template>
+
+<style scoped>
+.el-input {
+    margin: 10px 0;
+}
+</style>
 
 <script>
 export default {

@@ -6,25 +6,25 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1335",
+      "name": "退格",
+      "font_class": "tuige",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "11139881",
+      "name": "空集",
+      "font_class": "kongji",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
       "icon_id": "598152",
       "name": "calculator",
       "font_class": "calculator",
       "unicode": "e605",
       "unicode_decimal": 58885
-    },
-    {
-      "icon_id": "1199087",
-      "name": "calculator",
-      "font_class": "calculator2",
-      "unicode": "e600",
-      "unicode_decimal": 58880
-    },
-    {
-      "icon_id": "4936545",
-      "name": "calculator-fill",
-      "font_class": "calculator-fill",
-      "unicode": "e84d",
-      "unicode_decimal": 59469
     }
   ]
 }

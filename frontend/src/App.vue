@@ -71,12 +71,12 @@
 <style>
 #tab-operations {
   position: fixed;
-  bottom: 1%;
-  padding: 2%;
+  bottom: 0%;
+  padding: 1% 0;
   text-align: left;
 }
 #container {
-  height: 90%;
+  height: 92%;
 }
 </style>
 
