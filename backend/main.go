@@ -1,5 +1,3 @@
-//FIXME: 操作数过长
-
 package main
 
 import (
@@ -155,7 +153,7 @@ func calc() (int, error) {
 		}
 	}
 	if ans, err := strconv.Atoi(parser.Pop()); err != nil {
-		panic(err)
+		return 0, errors.New("操作数过大")
 	} else {
 		return ans, nil
 	}
