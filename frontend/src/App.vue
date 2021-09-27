@@ -6,9 +6,13 @@
     </el-tabs>
     <router-view @calc="calc" />
     <div v-if="ansHistory.length !== 0" id="history">
-      <el-table :data="ansHistory" stripe style="width: 100%">
+      <el-table :data="ansHistory"
+                fit
+                highlight-current-row
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="auto" />
-        <el-table-column prop="correctedExp" label="修正表达式" width="auto" />
+        <el-table-column prop="correctedExp" label="修正表达式" width="150%" />
         <el-table-column prop="answer" label="结果" width="auto" />
         <el-table-column fixed="right" label="操作" width="auto">
           <template #default="scope">
@@ -71,7 +75,7 @@ export default {
           message.warning(`${errorMsg}`);
         } else {
           console.log(this.ansHistory);
-          ansHistory.push({correctedExp:correctedExp,answer:answer});
+          ansHistory.unshift({correctedExp:correctedExp,answer:answer});
           this.ansHistory=ansHistory;
         }
       };
@@ -94,7 +98,10 @@ export default {
       }, function (e) {
         message.success('复制失败')
       })
-    }
+    },
+    handleSelectionChange(val) {
+      console.log(val)
+    },
   },
   watch: {
     mode(newMode) {
