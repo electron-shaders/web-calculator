@@ -158,6 +158,30 @@ func main() {
 	http.ListenAndServe(":3001", nil)
 }
 
+func sendErr(w http.ResponseWriter, err error) {
+	fmt.Println("错误:", err)
+	res.Error = err.Error()
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.WriteHeader(http.StatusOK)
+	if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
+		panic(jsonErr)
+	}
+}
+
+func sendAns(w http.ResponseWriter, ans int) {
+	fmt.Println("计算结果:", ans)
+	res.Answer = ans
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.WriteHeader(http.StatusOK)
+	if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
+		panic(jsonErr)
+	}
+}
+
 func process(w http.ResponseWriter, request *http.Request) {
 	parser.Clear()
 	res.clear()
@@ -168,36 +192,11 @@ func process(w http.ResponseWriter, request *http.Request) {
 	if err := decoder.Decode(&req); err != nil {
 		panic(err)
 	}
-
 	if err := preParse(req.Tmp); err != nil {
-		fmt.Println("错误:", err)
-		res.Error = err.Error()
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.WriteHeader(http.StatusOK)
-		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
-			panic(jsonErr)
-		}
+		sendErr(w, err)
 	} else if ans, err := calc(); err != nil {
-		fmt.Println("错误:", err)
-		res.Error = err.Error()
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.WriteHeader(http.StatusOK)
-		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
-			panic(jsonErr)
-		}
+		sendErr(w, err)
 	} else {
-		fmt.Println("计算结果:", ans)
-		res.Answer = ans
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.WriteHeader(http.StatusOK)
-		if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
-			panic(jsonErr)
-		}
+		sendAns(w, ans)
 	}
 }
