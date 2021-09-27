@@ -12,8 +12,8 @@
         <el-table-column prop="answer" label="结果" width="auto" />
         <el-table-column fixed="right" label="操作" width="auto">
           <template #default="scope">
-            <el-button type="primary" icon="el-icon-document-copy" @click.prevent="copyAns(scope.row.answer)">复制结果</el-button>
-            <el-button type="danger" icon="el-icon-delete" @click.prevent="handleDelete(scope.$index)">删除</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-document-copy" @click.prevent="copyAns(scope.row.answer)">复制结果</el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="handleDelete(scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

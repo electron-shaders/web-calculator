@@ -128,14 +128,8 @@ func calc() (int, error) {
 		if oplv(parsedExp[i]) == -1 {
 			parser.Push(parsedExp[i])
 		} else {
-			x, err := strconv.Atoi(parser.Pop())
-			if err != nil {
-				return 0, errors.New("操作数过大")
-			}
-			y, err := strconv.Atoi(parser.Pop())
-			if err != nil {
-				return 0, errors.New("操作数过大")
-			}
+			x, _ := strconv.Atoi(parser.Pop())
+			y, _ := strconv.Atoi(parser.Pop())
 			switch parsedExp[i] {
 			case "+":
 				parser.Push(strconv.Itoa(y + x))
