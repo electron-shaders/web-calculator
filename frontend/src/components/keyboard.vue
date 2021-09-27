@@ -1,6 +1,6 @@
 <template>
     <div id="orig-exp-textarea">
-        <el-input v-model="origExp" autosize type="text" placeholder="请输入一个表达式......">
+        <el-input v-model="origExp" @keyup.enter.native="this.$emit('calc',{origExp}); origExp=''" autosize type="text" placeholder="请输入一个表达式......">
             <template #append>
                 <el-button type="primary" @click="this.$emit('calc',{origExp}); origExp=''">
                     <span class="iconfont el-icon-third-calculator" style="vertical-align: middle;"> 计算 </span>                

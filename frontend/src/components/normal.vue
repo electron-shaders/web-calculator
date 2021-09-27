@@ -1,5 +1,7 @@
 <template>
-    Normal mode 未完成
+    <div>
+        Normal mode 未完成
+    </div>
 </template>
 
 <script>
