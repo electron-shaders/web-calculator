@@ -1,5 +1,3 @@
-//TODO: 检测负数
-//TODO: 支持小数
 //FIXME: 操作数过长
 
 package main
