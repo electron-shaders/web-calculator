@@ -1,10 +1,7 @@
 <template>
-  <el-container
-    id="container"
-    @keyup.esc.exact="message.clear()"
-  >
+  <el-container id="container" @keyup.esc.exact="message.clear()">
     <el-aside width="35%">
-      <div v-if="ansHistory.length !== 0" id="history">
+      <div v-if="ansHistory.length !== 0">
         <el-table
           :data="ansHistory"
           fit
@@ -19,7 +16,12 @@
             label="修正表达式"
             width="auto"
           />
-          <el-table-column prop="answer" label="结果" width="auto" />
+          <el-table-column
+            prop="answer"
+            fixed="right"
+            label="结果"
+            width="auto"
+          />
           <el-table-column fixed="right" label="操作" width="auto">
             <template #default="scope" style="text-align: right">
               <el-button
@@ -68,11 +70,13 @@
 
 <style>
 #tab-operations {
+  position: fixed;
+  bottom: 1%;
   padding: 2%;
   text-align: left;
 }
-#container{
-  height: 100%;
+#container {
+  height: 90%;
 }
 </style>
 
