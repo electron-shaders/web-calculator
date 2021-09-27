@@ -149,10 +149,12 @@ func calc() (int, error) {
 			}
 		}
 	}
-	if ans, err := strconv.Atoi(parser.Pop()); err != nil {
-		return 0, errors.New("操作数过大")
-	} else {
+	if ans, err := strconv.Atoi(parser.Pop()); err == nil {
 		return ans, nil
+	} else if err.Error() == `strconv.Atoi: parsing "": invalid syntax` {
+		return 0, nil
+	} else {
+		return 0, errors.New("操作数过大")
 	}
 }
 
