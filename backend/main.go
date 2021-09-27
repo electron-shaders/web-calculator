@@ -62,6 +62,9 @@ func preParse(tmp string) error {
 	}
 	temp := strings.Replace(tmp, " ", "", -1)
 	temp = strings.Replace(temp, "\n", "", -1)
+	temp = strings.Replace(temp, "。", ".", -1)
+	temp = strings.Replace(temp, "（", "(", -1)
+	temp = strings.Replace(temp, "）", ")", -1)
 	res.CorrectedExp = temp
 	fmt.Println("修正结果:", temp)
 	indexs, err := findIndOfOps(temp)
