@@ -1,47 +1,63 @@
 <template>
-  <div class="demo">
+  <div>
     <el-tabs v-model="mode">
       <el-tab-pane label="标准模式" name="normal"></el-tab-pane>
       <el-tab-pane label="键盘模式" name="keyboard"></el-tab-pane>
     </el-tabs>
     <router-view @calc="calc" />
     <div v-if="ansHistory.length !== 0" id="history">
-      <el-table :data="ansHistory"
-                fit
-                highlight-current-row
-                style="width: 100%"
-                @selection-change="handleSelectionChange">
+      <el-table
+        :data="ansHistory"
+        fit
+        highlight-current-row
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="auto" />
         <el-table-column prop="correctedExp" label="修正表达式" width="150%" />
         <el-table-column prop="answer" label="结果" width="auto" />
         <el-table-column fixed="right" label="操作" width="auto">
           <template #default="scope">
-            <el-button type="primary" size="mini" icon="el-icon-document-copy" @click.prevent="copyAns(scope.row.answer)">复制结果</el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="handleDelete(scope.$index)">删除</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-document-copy"
+              @click.prevent="copyEle(scope.row.answer)"
+              >复制结果</el-button
+            >
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              @click.prevent="delEle(scope.$index)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
+      <div id="tab-operations">
+        <el-button
+          type="danger"
+          :disabled="selected.length === 0"
+          icon="el-icon-delete"
+          @click="delSelected"
+          >删除选中</el-button
+        >
+      </div>
     </div>
     <div v-else>
-      <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.png"></el-empty>
+      <el-empty
+        description="输入一个新的表达式开始计算"
+        image="./src/assets/img/null.png"
+      ></el-empty>
     </div>
   </div>
 </template>
 
 <style>
-.demo {
-  position: absolute;
-  font-size: 15px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40%;
-  border: 2px solid grey;
-  border-width: auto;
-  border-radius: 10px;
-  padding: 15px;
-  vertical-align: middle;
-  text-align: center;
+#tab-operations {
+  padding: 2%;
+  text-align: left;
 }
 </style>
 
@@ -55,6 +71,7 @@ export default {
     return {
       mode: "keyboard",
       ansHistory: [],
+      selected: [],
     };
   },
   methods: {
@@ -65,7 +82,7 @@ export default {
       let data = { "orig-exp": newExp.origExp };
       let ansHistory = this.ansHistory;
       console.log(data);
-      let resHandler = function(result){
+      let resHandler = function (result) {
         message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
@@ -74,9 +91,15 @@ export default {
         if (errorMsg !== "") {
           message.warning(`${errorMsg}`);
         } else {
-          console.log(this.ansHistory);
-          ansHistory.unshift({correctedExp:correctedExp,answer:answer});
-          this.ansHistory=ansHistory;
+          ansHistory.unshift({
+            correctedExp: correctedExp,
+            answer: answer,
+            index: 0,
+          });
+          for (let i = 1; i < ansHistory.length; i++) {
+            ansHistory[i].index = i;
+          }
+          this.ansHistory = ansHistory;
         }
       };
       axios.post({
@@ -88,19 +111,39 @@ export default {
         success: resHandler,
       });
     },
-    handleDelete(index) {
-      message.success('已删除')
-      this.ansHistory.splice(index, 1);
-    },
-    copyAns: function (val) {
-      this.$copyText(val).then(function (e) {
-        message.success('复制成功')
-      }, function (e) {
-        message.success('复制失败')
-      })
-    },
     handleSelectionChange(val) {
-      console.log(val)
+      this.selected = val;
+      console.log(val);
+    },
+    delSelected() {
+      this.selected.sort(function (a, b) {
+        let x = a.index;
+        let y = b.index;
+        return x < y ? 1 : x > y ? -1 : 0;
+      });
+      console.log(this.selected);
+      for (let i = 0; i < this.selected.length; i++) {
+        this.ansHistory.splice(this.selected[i].index, 1);
+      }
+      for (let i = 0; i < this.ansHistory.length; i++) {
+        this.ansHistory[i].index = i;
+      }
+      message.success("已删除");
+    },
+    delEle(index) {
+      this.ansHistory.splice(index, 1);
+      console.log(index);
+      message.success("已删除");
+    },
+    copyEle: function (val) {
+      this.$copyText(val).then(
+        function (e) {
+          message.success("复制成功");
+        },
+        function (e) {
+          message.success("复制失败");
+        }
+      );
     },
   },
   watch: {
