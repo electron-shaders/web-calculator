@@ -55,7 +55,6 @@ export default {
   },
   methods: {
     calc(newExp) {
-      message.clear();
       let errorMsg = "";
       let correctedExp = "";
       let answer = NaN;
@@ -63,6 +62,7 @@ export default {
       let ansHistory = this.ansHistory;
       console.log(data);
       let resHandler = function(result){
+        message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
         answer = result["answer"];
@@ -85,16 +85,13 @@ export default {
       });
     },
     handleDelete(index) {
-      message.clear()
       message.success('已删除')
       this.ansHistory.splice(index, 1);
     },
     copyAns: function (val) {
       this.$copyText(val).then(function (e) {
-        message.clear()
         message.success('复制成功')
       }, function (e) {
-        message.clear()
         message.success('复制失败')
       })
     }
