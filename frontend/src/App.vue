@@ -1,5 +1,7 @@
 <template>
-  <el-container>
+  <el-container
+    @keyup.delete.native="delSelected"
+  >
     <el-aside width="35%">
       <div v-if="ansHistory.length !== 0" id="history">
         <el-table
@@ -8,7 +10,6 @@
           highlight-current-row
           style="width: 100%"
           @selection-change="handleSelectionChange"
-          @keyup.delete.native="delSelected"
         >
           <el-table-column type="selection" width="auto" />
           <el-table-column
@@ -90,13 +91,11 @@ export default {
       let answer = NaN;
       let data = { "orig-exp": newExp.origExp };
       let ansHistory = this.ansHistory;
-      console.log(data);
       let resHandler = function (result) {
         message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
         answer = result["answer"];
-        console.log(result);
         if (errorMsg !== "") {
           message.warning(`${errorMsg}`);
         } else {
@@ -122,7 +121,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.selected = val;
-      console.log(val);
     },
     delSelected() {
       if (this.selected.length === 0) {
@@ -133,7 +131,6 @@ export default {
           let y = b.index;
           return x < y ? 1 : x > y ? -1 : 0;
         });
-        console.log(this.selected);
         for (let i = 0; i < this.selected.length; i++) {
           this.ansHistory.splice(this.selected[i].index, 1);
         }
