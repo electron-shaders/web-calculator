@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-input ref="input-box" disabled :value="origExp" autosize type="text" />
+        <el-input ref="input-box" v-model="origExp" @keyup.enter.native="this.$emit('calc',{origExp}); origExp=''" autosize type="text" />
         <el-row :gutter="20">
             <el-col :span="6"><el-button type="primary" @click="origExp+='7'">7</el-button></el-col>
             <el-col :span="6"><el-button type="primary" @click="origExp+='8'">8</el-button></el-col>
@@ -52,6 +52,9 @@ export default {
         return{
             origExp:""
         }
+    },
+    mounted() {
+        this.$refs['input-box'].focus()
     },
 }
 </script>
