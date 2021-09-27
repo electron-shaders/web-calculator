@@ -1,6 +1,7 @@
 <template>
   <el-container
-    @keyup.delete.native="delSelected"
+    id="container"
+    @keyup.esc.exact="message.clear()"
   >
     <el-aside width="35%">
       <div v-if="ansHistory.length !== 0" id="history">
@@ -9,6 +10,7 @@
           fit
           highlight-current-row
           style="width: 100%"
+          @keyup.delete.native="delSelected"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="auto" />
@@ -68,6 +70,9 @@
 #tab-operations {
   padding: 2%;
   text-align: left;
+}
+#container{
+  height: 100%;
 }
 </style>
 
