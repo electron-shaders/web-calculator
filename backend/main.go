@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -13,9 +14,9 @@ import (
 )
 
 type ResData struct {
-	Answer       int    `json:"answer"`
-	CorrectedExp string `json:"corrected-exp"`
-	Error        string `json:"error-msg"`
+	Answer       float64 `json:"answer"`
+	CorrectedExp string  `json:"corrected-exp"`
+	Error        string  `json:"error-msg"`
 }
 
 func (res *ResData) clear() {
@@ -36,10 +37,10 @@ var (
 )
 
 func findIndOfOps(orig string) ([][]int, error) {
-	if regexp.MustCompile(`[^\+\-\*/\(\)0-9]`).MatchString(orig) {
+	if regexp.MustCompile(`[^\+\-\*/\(\)0-9\.\^#]`).MatchString(orig) {
 		return nil, errors.New("表达式包含非法字符")
 	}
-	return regexp.MustCompile(`(\+|\-|\*|/|\(|\))`).FindAllStringIndex(orig, -1), nil
+	return regexp.MustCompile(`(\+|\-|\*|/|\(|\)|\^|#)`).FindAllStringIndex(orig, -1), nil
 }
 
 func oplv(op string) int {
@@ -48,8 +49,10 @@ func oplv(op string) int {
 		return 1
 	case "*", "/":
 		return 2
-	case "(", ")":
+	case "^", "#":
 		return 3
+	case "(", ")":
+		return 4
 	default:
 		return -1
 	}
@@ -65,24 +68,35 @@ func preParse(tmp string) error {
 	temp = strings.Replace(temp, "。", ".", -1)
 	temp = strings.Replace(temp, "（", "(", -1)
 	temp = strings.Replace(temp, "）", ")", -1)
+	temp = strings.Replace(temp, "、", "/", -1)
 	res.CorrectedExp = temp
 	fmt.Println("修正结果:", temp)
+	temp = strings.Replace(temp, "√", "#", -1)
+	temp = strings.Replace(temp, "%", "/100", -1)
 	indexs, err := findIndOfOps(temp)
 	if err != nil {
 		res.Error = err.Error()
 		return err
 	}
+	bracket := 0
 	if len(indexs) > 0 {
 		for i := 0; i < len(temp); i++ {
 			if i != indexs[tot][0] {
 				parsedExp += string(temp[i])
+			} else if string(temp[i]) == "#" {
+				parsedExp += "# "
+				if tot < len(indexs)-1 {
+					tot++
+				}
 			} else if string(temp[i]) == "(" {
-				parsedExp += string(temp[i]) + " "
+				bracket++
+				parsedExp += "( "
 				if tot < len(indexs)-1 {
 					tot++
 				}
 			} else if string(temp[i]) == ")" {
-				parsedExp += " " + string(temp[i])
+				bracket--
+				parsedExp += " )"
 				if tot < len(indexs)-1 {
 					tot++
 				}
@@ -98,10 +112,13 @@ func preParse(tmp string) error {
 			parsedExp += string(temp[i])
 		}
 	}
+	if bracket > 0 {
+		return errors.New("括号匹配不完整")
+	}
 	return nil
 }
 
-func calc() (int, error) {
+func calc() (float64, error) {
 	origExp = strings.Split(parsedExp, " ")
 	var parsedExp []string
 	for i := 0; i < len(origExp); i++ {
@@ -131,29 +148,34 @@ func calc() (int, error) {
 		if oplv(parsedExp[i]) == -1 {
 			parser.Push(parsedExp[i])
 		} else {
-			x, _ := strconv.Atoi(parser.Pop())
-			y, _ := strconv.Atoi(parser.Pop())
+			x, _ := strconv.ParseFloat(parser.Pop(), 64)
+			y, _ := strconv.ParseFloat(parser.Pop(), 64)
 			switch parsedExp[i] {
 			case "+":
-				parser.Push(strconv.Itoa(y + x))
+				parser.Push(fmt.Sprintf("%.8f", y+x))
 			case "-":
-				parser.Push(strconv.Itoa(y - x))
+				parser.Push(fmt.Sprintf("%.8f", y-x))
 			case "*":
-				parser.Push(strconv.Itoa(y * x))
+				parser.Push(fmt.Sprintf("%.8f", y*x))
 			case "/":
 				if x == 0 {
 					return 0, errors.New("除数不可为 0")
 				} else {
-					parser.Push(strconv.Itoa(y / x))
+					parser.Push(fmt.Sprintf("%.8f", y/x))
 				}
+			case "^":
+				parser.Push(fmt.Sprintf("%.8f", math.Pow(y, x)))
+			case "#":
+				parser.Push(fmt.Sprintf("%.8f", math.Sqrt(x)))
 			}
 		}
 	}
-	if ans, err := strconv.Atoi(parser.Pop()); err == nil {
+	if ans, err := strconv.ParseFloat(parser.Pop(), 64); err == nil {
 		return ans, nil
-	} else if err.Error() == `strconv.Atoi: parsing "": invalid syntax` {
+	} else if regexp.MustCompile(`invalid syntax`).MatchString(err.Error()) {
 		return 0, nil
 	} else {
+		fmt.Println(err)
 		return 0, errors.New("操作数过大")
 	}
 }
@@ -175,7 +197,7 @@ func sendErr(w http.ResponseWriter, err error) {
 	}
 }
 
-func sendAns(w http.ResponseWriter, ans int) {
+func sendAns(w http.ResponseWriter, ans float64) {
 	fmt.Println("计算结果:", ans)
 	res.Answer = ans
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
