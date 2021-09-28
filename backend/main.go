@@ -120,6 +120,12 @@ func preParse(tmp string) error {
 
 func calc() (float64, error) {
 	origExp = strings.Split(parsedExp, " ")
+	for i := 0; i < len(origExp); i++ {
+		if origExp[i] == "-" && origExp[i-1] == "" {
+			origExp[i] = "-" + origExp[i+1]
+			origExp = append(origExp[:i-1], append(origExp[i:i+1], origExp[i+2:]...)...)
+		}
+	}
 	var parsedExp []string
 	for i := 0; i < len(origExp); i++ {
 		if oplv(origExp[i]) == -1 {
@@ -130,7 +136,7 @@ func calc() (float64, error) {
 					parsedExp = append(parsedExp, parser.Pop())
 				}
 				parser.Pop()
-			} else if oplv(parser.Top()) <= oplv(origExp[i]) {
+			} else if oplv(parser.Top()) < oplv(origExp[i]) {
 				parser.Push(origExp[i])
 			} else {
 				for oplv(parser.Top()) >= oplv(origExp[i]) && parser.Top() != "(" {
@@ -152,21 +158,21 @@ func calc() (float64, error) {
 			y, _ := strconv.ParseFloat(parser.Pop(), 64)
 			switch parsedExp[i] {
 			case "+":
-				parser.Push(fmt.Sprintf("%.8f", y+x))
+				parser.Push(fmt.Sprintf("%.9f", y+x))
 			case "-":
-				parser.Push(fmt.Sprintf("%.8f", y-x))
+				parser.Push(fmt.Sprintf("%.9f", y-x))
 			case "*":
-				parser.Push(fmt.Sprintf("%.8f", y*x))
+				parser.Push(fmt.Sprintf("%.9f", y*x))
 			case "/":
 				if x == 0 {
 					return 0, errors.New("除数不可为 0")
 				} else {
-					parser.Push(fmt.Sprintf("%.8f", y/x))
+					parser.Push(fmt.Sprintf("%.9f", y/x))
 				}
 			case "^":
-				parser.Push(fmt.Sprintf("%.8f", math.Pow(y, x)))
+				parser.Push(fmt.Sprintf("%.9f", math.Pow(y, x)))
 			case "#":
-				parser.Push(fmt.Sprintf("%.8f", math.Sqrt(x)))
+				parser.Push(fmt.Sprintf("%.9f", math.Sqrt(x)))
 			}
 		}
 	}
