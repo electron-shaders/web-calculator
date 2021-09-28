@@ -88,7 +88,7 @@ export default {
   name: "app",
   data() {
     return {
-      mode: "keyboard",
+      mode: "normal",
       ansHistory: [],
       selected: [],
     };
@@ -174,7 +174,7 @@ export default {
     },
   },
   mounted() {
-    router.push({ name: "keyboard" });
+    router.push({ name: "normal" });
   },
 };
 </script>
