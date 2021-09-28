@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { components, plugins } from './plugins/element';
 import 'element-plus/theme-chalk/src/index.scss'
+import 'element-plus/theme-chalk/display.css'
 import store from './store/index'
 import router from './router/index'
 import App from './App.vue'

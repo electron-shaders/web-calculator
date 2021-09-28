@@ -10,7 +10,7 @@
     >
       <template #append>
         <el-button type="primary" @click="this.$emit('calc', { origExp }); origExp = ''">
-          <span class="iconfont el-icon-third-calculator" style="vertical-align: middle;">计算</span>
+          <span class="iconfont el-icon-third-calculator" style="vertical-align: middle;"> 计算 </span>
         </el-button>
       </template>
     </el-input>
