@@ -11,17 +11,8 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="auto" />
-          <el-table-column
-            prop="correctedExp"
-            label="修正表达式"
-            width="auto"
-          />
-          <el-table-column
-            prop="answer"
-            fixed="right"
-            label="结果"
-            width="auto"
-          />
+          <el-table-column prop="correctedExp" label="修正表达式" width="auto" />
+          <el-table-column prop="answer" fixed="right" label="结果" width="auto" />
           <el-table-column fixed="right" label="操作" width="auto">
             <template #default="scope" style="text-align: right">
               <el-button
@@ -47,15 +38,11 @@
             :disabled="selected.length === 0"
             icon="el-icon-delete"
             @click="delSelected"
-            >删除选中</el-button
-          >
+          >删除选中</el-button>
         </div>
       </div>
       <div v-else>
-        <el-empty
-          description="输入一个新的表达式开始计算"
-          image="./src/assets/img/null.svg"
-        ></el-empty>
+        <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.svg"></el-empty>
       </div>
     </el-aside>
     <el-main>
