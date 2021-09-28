@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus';
+import { components, plugins } from './plugins/element';
 import 'element-plus/theme-chalk/src/index.scss'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import store from './store/index'
 import router from './router/index'
 import App from './App.vue'
@@ -9,7 +8,12 @@ import VueClipboard from 'vue-clipboard2'
 import './assets/icons/iconfont.css'
 
 const app = createApp(App)
-app.use(ElementPlus,{locale: zhCn})
+components.forEach(component => {
+    app.component(component.name, component)
+})
+plugins.forEach(plugin => {
+    app.use(plugin)
+})
 app.use(router)
 app.use(store)
 app.use(VueClipboard)
