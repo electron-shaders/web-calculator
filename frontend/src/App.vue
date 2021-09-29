@@ -59,7 +59,7 @@ export default {
           message.warning(`${errorMsg}`);
           this.origExp="";
         } else {
-          this.origExp=answer;
+          this.origExp=answer.toString();
           ansHistory.unshift({
             correctedExp: correctedExp,
             answer: answer,
@@ -74,7 +74,7 @@ export default {
         this.isLoading=false;
         this.origExp="";
         message.alert({
-          title: '请求出错', msg: `${error}`
+          title: '后端出错', msg: `${error}`
         });
       }
       axios.post({
