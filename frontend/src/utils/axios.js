@@ -3,7 +3,7 @@ import axios from 'axios'
 //引入登录拦截
 import store/*, {TOKEN_HEADER}*/ from "../store";
 //引入路由
-import router from "../router";
+//import router from "../router";
 //引入定义链接
 //import {reUrl, path} from './urls'
 //引入qs
@@ -42,6 +42,7 @@ axios.interceptors.request.use(
     }
 );
 // http response 拦截器
+/*
 axios.interceptors.response.use(
     res => {
         if (res.data.code === 102) {
@@ -58,6 +59,7 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+*/
 
 const request = (object) => {
     let loading = null;

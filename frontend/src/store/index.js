@@ -1,29 +1,20 @@
 import { createStore } from "vuex";
 
 const store = createStore({
-  state () {
+  state() {
     return {
-        token: null,
-        origExp: "",
+      token: null,
+      origExp: "",
+      isLoading: false,
     }
   },
-  getters: {
-    getOrigExp: (state) => {
-      return state.origExp
-    },
-  },
   mutations: {
-    setOrigExp(state, newExp){
-        state.origExp = newExp
+    setOrigExp(state, newValue) {
+      state.origExp = newValue
     },
-    appendOrigExp(state, ch){
-        state.origExp += ch
-    },
-    updateRes(state, res){
-        state.errorMsg = res.data['error-msg']
-        state.correctedExp = res.data['corrected-exp']
-        state.answer = res.data['answer']
-    },
+    setLoading(state, newValue) {
+      state.isLoading = newValue
+    }
   },
 })
 

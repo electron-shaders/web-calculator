@@ -2,17 +2,15 @@
     <div>
         <el-input
             ref="input-box"
+            disabled
             v-model="origExp"
-            @keyup.enter.native="this.$emit('calc', { origExp }); origExp = ''"
+            @keyup.enter.native="this.$emit('calc', { origExp });"
             autosize
             type="text"
         >
             <template #append>
                 <el-button size="mini" @click="origExp = origExp.substring(0, origExp.length - 1)">
-                    <span
-                        class="iconfont el-icon-third-tuige"
-                        style="vertical-align: middle;"
-                    />
+                    <span class="iconfont el-icon-third-tuige" style="vertical-align: middle;" />
                 </el-button>
             </template>
         </el-input>
@@ -24,7 +22,9 @@
                 <el-button type="primary" @click="origExp += ')'">)</el-button>
             </el-col>
             <el-col :span="6">
-                <el-button type="primary" @click="origExp += '^2'">x<sup>2</sup></el-button>
+                <el-button type="primary" @click="origExp += '^2'">
+                    x<sup>2</sup>
+                </el-button>
             </el-col>
             <el-col :span="6">
                 <el-button type="primary" @click="origExp += '√'">√</el-button>
@@ -42,7 +42,7 @@
             </el-col>
             <el-col :span="6">
                 <el-button type="primary" @click="origExp += '/'">÷</el-button>
-            </el-col>            
+            </el-col>
         </el-row>
         <el-row :gutter="10">
             <el-col :span="6">
@@ -85,14 +85,14 @@
             </el-col>
             <el-col :span="6">
                 <el-button type="primary" @click="origExp += '+'">+</el-button>
-            </el-col>            
+            </el-col>
         </el-row>
         <el-row :gutter="10">
             <el-col :span="12">
                 <el-button type="warning" @click="origExp = ''">C</el-button>
             </el-col>
             <el-col :span="12">
-                <el-button type="success" @click="this.$emit('calc', { origExp }); origExp = ''">=</el-button>
+                <el-button type="success" @click="this.$emit('calc', { origExp });" :loading="isLoading">=</el-button>
             </el-col>
         </el-row>
     </div>
@@ -112,11 +112,20 @@
 </style>
 
 <script>
+import store from "../store"
 export default {
     name: "normal",
-    data() {
-        return {
-            origExp: ""
+    computed: {
+        origExp: {
+            get() {
+                return this.$store.state.origExp;
+            },
+            set(newVal) {
+                store.commit('setOrigExp', newVal)
+            }
+        },
+        isLoading() {
+            return this.$store.state.isLoading;
         }
     },
     mounted() {

@@ -32,11 +32,12 @@
     </el-table>
     <div id="tab-operations">
       <el-button
+        circle
         type="danger"
         :disabled="selected.length === 0"
         icon="el-icon-delete"
         @click="delSelected"
-      >删除选中</el-button>
+      />
     </div>
   </div>
   <div v-else>
@@ -96,6 +97,7 @@ export default {
     },
   },
   mounted() {
+    this.windowWidth=window.innerWidth;
     window.onresize = () => {
       return (() => {
         this.windowWidth=window.innerWidth;
