@@ -187,7 +187,9 @@ func calc() (float64, error) {
 }
 
 func main() {
+	fmt.Println("开始启动...")
 	http.HandleFunc("/", process)
+	fmt.Println("启动成功，开始监听3001端口")
 	http.ListenAndServe(":3001", nil)
 }
 
