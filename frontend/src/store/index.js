@@ -6,6 +6,7 @@ const store = createStore({
       token: null,
       origExp: "",
       isLoading: false,
+      ansHistory: [],
     }
   },
   mutations: {
@@ -14,6 +15,22 @@ const store = createStore({
     },
     setLoading(state, newValue) {
       state.isLoading = newValue
+    },
+    updateAnsHistory(state, newValue) {
+      state.ansHistory.unshift({
+        correctedExp: newValue.correctedExp,
+        answer: newValue.answer,
+        index: 0,
+      });
+      for (let i = 1; i < state.ansHistory.length; i++) {
+        state.ansHistory[i].index = i;
+      }
+    },
+    deleteAnsHistory(state, index) {
+      state.ansHistory.splice(index, 1);
+      for (let i = 0; i < state.ansHistory.length; i++) {
+        state.ansHistory[i].index = i;
+      }
     }
   },
 })

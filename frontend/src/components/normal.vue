@@ -128,8 +128,5 @@ export default {
             return this.$store.state.isLoading;
         }
     },
-    mounted() {
-        this.$refs['input-box'].focus()
-    },
 }
 </script>

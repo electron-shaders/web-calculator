@@ -8,8 +8,8 @@
       @keyup.delete.native="delSelected"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="auto" />
-      <el-table-column v-if="this.windowWidth >= 1440" prop="correctedExp" label="修正表达式" width="auto" />
+      <el-table-column v-if="this.windowWidth >= 425" type="selection" width="auto" />
+      <el-table-column v-if="this.windowWidth >= 1440 || (this.windowWidth >= 600 && this.windowWidth < 993)" prop="correctedExp" label="修正表达式" width="auto" />
       <el-table-column prop="answer" fixed="right" label="结果" width="auto" />
       <el-table-column fixed="right" label="操作" width="auto">
         <template #default="scope" style="text-align: right">
@@ -49,17 +49,18 @@
 import message from "../utils/message";
 export default {
   name: "history",
+  props: ['window-width'],
   data() {
     return {
-      ansHistory: [],
       selected: [],
-      windowWidth: NaN,
+    }
+  },
+  computed:{
+    ansHistory(){
+      return this.$store.state.ansHistory;
     }
   },
   methods: {
-    getAnsHistory() {
-      return this.ansHistory;
-    },
     handleSelectionChange(val) {
       this.selected = val;
     },
@@ -73,16 +74,13 @@ export default {
           return x < y ? 1 : x > y ? -1 : 0;
         });
         for (let i = 0; i < this.selected.length; i++) {
-          this.ansHistory.splice(this.selected[i].index, 1);
-        }
-        for (let i = 0; i < this.ansHistory.length; i++) {
-          this.ansHistory[i].index = i;
-        }
+          this.$store.commit('deleteAnsHistory', this.selected[i].index);
+        }        
         message.success("已删除");
       }
     },
     delEle(index) {
-      this.ansHistory.splice(index, 1);
+      this.$store.commit('deleteAnsHistory', index);
       message.success("已删除");
     },
     copyEle: function (val) {
@@ -95,14 +93,6 @@ export default {
         }
       );
     },
-  },
-  mounted() {
-    this.windowWidth=window.innerWidth;
-    window.onresize = () => {
-      return (() => {
-        this.windowWidth=window.innerWidth;
-      })()
-    }
   },
 }
 </script>
