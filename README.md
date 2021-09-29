@@ -1,7 +1,7 @@
 # web-calculator
 
 ## 支持功能
-现支持`键盘输入模式`、`标准模式`、`计算历史记录`、`幂运算`、`9位小数`
+现支持`键盘输入模式`、`标准模式`、`历史记录`、`幂运算`、`9位小数`、`自适应布局`、`(批量)删除和复制历史记录`、`简单的自动修正`
 
 ## License
 `web-calculator` by [Elycts Shaders](https://github.com/electron-shaders) is licensed under [SATA-License](https://github.com/electron-shaders/web-calculator/blob/main/LICENSE), so you should star/like/+1 this project and thank the author whenever using this project.
