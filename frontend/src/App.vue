@@ -55,14 +55,14 @@ export default {
         message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
-        answer = result["answer"];
-        if (this.windowWidth <= 992) {
-          message.success(`计算结果: ${answer}`)
-        }
+        answer = result["answer"];        
         if (errorMsg !== "") {
           message.warning(`${errorMsg}`);
           this.origExp="";
         } else {
+          if (this.windowWidth <= 992) {
+            message.success(`计算结果: ${answer}`)
+          }
           this.origExp=answer.toString();
           this.$store.commit('updateAnsHistory',{
             correctedExp: correctedExp,

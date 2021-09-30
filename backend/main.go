@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -11,29 +10,18 @@ import (
 	"strings"
 
 	"github.com/electron-shaders/web-calculator/backend/stack"
+	"github.com/gin-gonic/gin"
 )
-
-type ResData struct {
-	Answer       float64 `json:"answer"`
-	CorrectedExp string  `json:"corrected-exp"`
-	Error        string  `json:"error-msg"`
-}
-
-func (res *ResData) clear() {
-	res.Answer = 0
-	res.CorrectedExp = ""
-	res.Error = ""
-}
 
 type ReqData struct {
 	Tmp string `json:"orig-exp"`
 }
 
 var (
-	res       ResData
-	origExp   []string
-	parsedExp string
-	parser    stack.StringStack
+	correctedExp string
+	origExp      []string
+	parsedExp    string
+	parser       stack.StringStack
 )
 
 func findIndOfOps(orig string) ([][]int, error) {
@@ -69,13 +57,12 @@ func preParse(tmp string) error {
 	temp = strings.Replace(temp, "（", "(", -1)
 	temp = strings.Replace(temp, "）", ")", -1)
 	temp = strings.Replace(temp, "、", "/", -1)
-	res.CorrectedExp = temp
+	correctedExp = temp
 	fmt.Println("修正结果:", temp)
 	temp = strings.Replace(temp, "√", "#", -1)
 	temp = strings.Replace(temp, "%", "/100", -1)
 	indexs, err := findIndOfOps(temp)
 	if err != nil {
-		res.Error = err.Error()
 		return err
 	}
 	bracket := 0
@@ -187,51 +174,38 @@ func calc() (float64, error) {
 }
 
 func main() {
-	fmt.Println("开始启动...")
-	http.HandleFunc("/", process)
-	fmt.Println("启动成功，开始监听3001端口")
-	http.ListenAndServe(":3001", nil)
-}
-
-func sendErr(w http.ResponseWriter, err error) {
-	fmt.Println("错误:", err)
-	res.Error = err.Error()
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.WriteHeader(http.StatusOK)
-	if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
-		panic(jsonErr)
-	}
-}
-
-func sendAns(w http.ResponseWriter, ans float64) {
-	fmt.Println("计算结果:", ans)
-	res.Answer = ans
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.WriteHeader(http.StatusOK)
-	if jsonErr := json.NewEncoder(w).Encode(res); jsonErr != nil {
-		panic(jsonErr)
-	}
-}
-
-func process(w http.ResponseWriter, request *http.Request) {
-	parser.Clear()
-	res.clear()
-	origExp = nil
-	parsedExp = ""
-	decoder := json.NewDecoder(request.Body)
-	var req ReqData
-	if err := decoder.Decode(&req); err != nil {
-		panic(err)
-	}
-	if err := preParse(req.Tmp); err != nil {
-		sendErr(w, err)
-	} else if ans, err := calc(); err != nil {
-		sendErr(w, err)
-	} else {
-		sendAns(w, ans)
-	}
+	router := gin.Default()
+	router.POST("/process", func(c *gin.Context) {
+		parser.Clear()
+		correctedExp = ""
+		origExp = nil
+		parsedExp = ""
+		var req ReqData
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusOK, gin.H{"error-msg": err.Error()})
+			fmt.Println(err)
+			return
+		}
+		if err := preParse(req.Tmp); err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"answer":        0,
+				"corrected-exp": "",
+				"error-msg":     err.Error(),
+			})
+		} else if ans, err := calc(); err != nil {
+			fmt.Println("计算结果:", ans)
+			c.JSON(http.StatusOK, gin.H{
+				"answer":        0,
+				"corrected-exp": "",
+				"error-msg":     err,
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"answer":        ans,
+				"corrected-exp": correctedExp,
+				"error-msg":     nil,
+			})
+		}
+	})
+	router.Run(":3001")
 }

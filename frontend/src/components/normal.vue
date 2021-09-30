@@ -92,7 +92,11 @@
                 <el-button type="warning" @click="origExp = ''">C</el-button>
             </el-col>
             <el-col :span="12">
-                <el-button type="success" @click="this.$emit('calc', { origExp });" :loading="isLoading">=</el-button>
+                <el-button
+                    type="success"
+                    @click="this.$emit('calc', { origExp });"
+                    :loading="isLoading"
+                >=</el-button>
             </el-col>
         </el-row>
     </div>
