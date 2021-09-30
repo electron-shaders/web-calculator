@@ -51,12 +51,13 @@ export default {
       let answer = NaN;
       let data = { "orig-exp": newExp.origExp };
       let resHandler = (result) => {
+        console.log(result)
         this.isLoading=false;
         message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
         answer = result["answer"];        
-        if (errorMsg !== "") {
+        if (errorMsg !== null) {
           message.warning(`${errorMsg}`);
           this.origExp="";
         } else {

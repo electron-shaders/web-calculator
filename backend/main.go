@@ -8,7 +8,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/electron-shaders/web-calculator/backend/color"
 	"github.com/electron-shaders/web-calculator/backend/stack"
 	"github.com/gin-gonic/gin"
 )
@@ -58,7 +60,8 @@ func preParse(tmp string) error {
 	temp = strings.Replace(temp, "）", ")", -1)
 	temp = strings.Replace(temp, "、", "/", -1)
 	correctedExp = temp
-	fmt.Println("修正结果:", temp)
+	timeStr := time.Now().Format("2006/01/02 - 03:04:05")
+	fmt.Printf("[INFO] %s 修正结果: %s\n", timeStr, temp)
 	temp = strings.Replace(temp, "√", "#", -1)
 	temp = strings.Replace(temp, "%", "/100", -1)
 	indexs, err := findIndOfOps(temp)
@@ -187,19 +190,24 @@ func main() {
 			return
 		}
 		if err := preParse(req.Tmp); err != nil {
+			timeStr := time.Now().Format("2006/01/02 - 03:04:05")
+			fmt.Println("[ERR]", timeStr, "错误:", color.Color(color.FgWhite, color.BgRed, err.Error()))
 			c.JSON(http.StatusOK, gin.H{
-				"answer":        0,
-				"corrected-exp": "",
+				"answer":        nil,
+				"corrected-exp": nil,
 				"error-msg":     err.Error(),
 			})
 		} else if ans, err := calc(); err != nil {
-			fmt.Println("计算结果:", ans)
+			timeStr := time.Now().Format("2006/01/02 - 03:04:05")
+			fmt.Println("[ERR]", timeStr, "错误:", color.Color(color.FgWhite, color.BgRed, err.Error()))
 			c.JSON(http.StatusOK, gin.H{
-				"answer":        0,
-				"corrected-exp": "",
-				"error-msg":     err,
+				"answer":        nil,
+				"corrected-exp": nil,
+				"error-msg":     err.Error(),
 			})
 		} else {
+			timeStr := time.Now().Format("2006/01/02 - 03:04:05")
+			fmt.Println("[INFO]", timeStr, "计算结果:", ans)
 			c.JSON(http.StatusOK, gin.H{
 				"answer":        ans,
 				"corrected-exp": correctedExp,
