@@ -80,7 +80,7 @@ export default {
         });
       }
       axios.post({
-        url: "http://localhost:3001/process",
+        url: "/process",
         data: data,
         loading: false,
         timeout: 100,

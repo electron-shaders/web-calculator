@@ -41,7 +41,7 @@
     </div>
   </div>
   <div v-else>
-    <el-empty description="输入一个新的表达式开始计算" image="./src/assets/img/null.svg"></el-empty>
+    <el-empty description="输入一个新的表达式开始计算" image="./assets/img/null.svg"></el-empty>
   </div>
 </template>
 

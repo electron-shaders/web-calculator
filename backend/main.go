@@ -26,6 +26,10 @@ var (
 	parser       stack.StringStack
 )
 
+func isInvalidSyntax(err error) bool {
+	return regexp.MustCompile(`invalid syntax`).MatchString(err.Error())
+}
+
 func findIndOfOps(orig string) ([][]int, error) {
 	if regexp.MustCompile(`[^\+\-\*/\(\)0-9\.\^#]`).MatchString(orig) {
 		return nil, errors.New("表达式包含非法字符")
@@ -73,11 +77,6 @@ func preParse(tmp string) error {
 		for i := 0; i < len(temp); i++ {
 			if i != indexs[tot][0] {
 				parsedExp += string(temp[i])
-			} else if string(temp[i]) == "#" {
-				parsedExp += "# "
-				if tot < len(indexs)-1 {
-					tot++
-				}
 			} else if string(temp[i]) == "(" {
 				bracket++
 				parsedExp += "( "
@@ -145,30 +144,41 @@ func calc() (float64, error) {
 			parser.Push(parsedExp[i])
 		} else {
 			x, _ := strconv.ParseFloat(parser.Pop(), 64)
-			y, _ := strconv.ParseFloat(parser.Pop(), 64)
 			switch parsedExp[i] {
 			case "+":
+				y, _ := strconv.ParseFloat(parser.Pop(), 64)
 				parser.Push(fmt.Sprintf("%.9f", y+x))
 			case "-":
+				y, _ := strconv.ParseFloat(parser.Pop(), 64)
 				parser.Push(fmt.Sprintf("%.9f", y-x))
 			case "*":
+				y, _ := strconv.ParseFloat(parser.Pop(), 64)
 				parser.Push(fmt.Sprintf("%.9f", y*x))
 			case "/":
+				y, _ := strconv.ParseFloat(parser.Pop(), 64)
 				if x == 0 {
 					return 0, errors.New("除数不可为 0")
 				} else {
 					parser.Push(fmt.Sprintf("%.9f", y/x))
 				}
 			case "^":
+				y, _ := strconv.ParseFloat(parser.Pop(), 64)
 				parser.Push(fmt.Sprintf("%.9f", math.Pow(y, x)))
 			case "#":
-				parser.Push(fmt.Sprintf("%.9f", math.Sqrt(x)))
+				y, err := strconv.ParseFloat(parser.Pop(), 64)
+				if err != nil && isInvalidSyntax(err) {
+					y = 1
+				}
+				if x < 0 {
+					return 0, errors.New("平方根的被开方数不可为负数")
+				}
+				parser.Push(fmt.Sprintf("%.9f", y*math.Sqrt(x)))
 			}
 		}
 	}
 	if ans, err := strconv.ParseFloat(parser.Pop(), 64); err == nil {
 		return ans, nil
-	} else if regexp.MustCompile(`invalid syntax`).MatchString(err.Error()) {
+	} else if isInvalidSyntax(err) {
 		return 0, nil
 	} else {
 		fmt.Println(err)

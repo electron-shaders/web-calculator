@@ -7,3 +7,4 @@ dist-ssr
 *.local
 .vscode
 demo*
+web_release
