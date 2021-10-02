@@ -53,10 +53,10 @@ export default {
       let resHandler = (result) => {
         console.log(result)
         this.isLoading=false;
-        message.clear();
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
-        answer = result["answer"];        
+        answer = result["answer"];
+        message.clear();      
         if (errorMsg !== null) {
           message.warning(`${errorMsg}`);
           this.origExp="";
@@ -75,6 +75,7 @@ export default {
       let errHandler = (error) => {
         this.isLoading=false;
         this.origExp="";
+        message.clear();
         message.alert({
           title: '后端出错', msg: `${error}`
         });
