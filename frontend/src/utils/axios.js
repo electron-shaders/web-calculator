@@ -19,7 +19,17 @@ import {
 import message from "./message";
 
 //axios定义
-axios.defaults.baseURL = "http://localhost:3001";
+//动态设置baseURL
+let protocol = window.location.protocol; //协议
+let host = window.location.host; //主机
+let reg = /^localhost+/;
+if(reg.test(host)) {
+    //若本地项目调试使用
+    axios.defaults.baseURL = 'http://localhost:3001';
+} else {
+    //动态请求地址             协议              主机
+    axios.defaults.baseURL = protocol + "//" + host  +":3001/calculator";
+}
 //axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 //axios.defaults.transformRequest = [object => qs.stringify(object)]
 
