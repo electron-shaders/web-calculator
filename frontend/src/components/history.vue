@@ -76,19 +76,16 @@ export default {
         for (let i = 0; i < this.selected.length; i++) {
           this.$store.commit('deleteAnsHistory', this.selected[i].index);
         }
-        message.clear();    
         message.success("已删除");
       }
     },
     delEle(index) {
       this.$store.commit('deleteAnsHistory', index);
-      message.clear();
       message.success("已删除");
     },
     copyEle: function (val) {
       this.$copyText(val).then(
         function (e) {
-          message.clear();
           message.success("复制成功");
         },
         function (e) {

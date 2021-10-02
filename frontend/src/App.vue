@@ -56,7 +56,6 @@ export default {
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
         answer = result["answer"];
-        message.clear();      
         if (errorMsg !== null) {
           message.warning(`${errorMsg}`);
           this.origExp="";
@@ -80,6 +79,7 @@ export default {
           title: '后端出错', msg: `${error}`
         });
       }
+      message.clear();
       axios.post({
         url: "/process",
         data: data,
