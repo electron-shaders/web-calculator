@@ -39,9 +39,6 @@ export default {
         store.commit('setOrigExp', newVal)
       }
     },
-    isLoading() {
-      return this.$store.state.isLoading;
-    }
   },
 }
 </script>
