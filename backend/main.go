@@ -163,7 +163,11 @@ func calc() (float64, error) {
 				}
 			case "^":
 				y, _ := strconv.ParseFloat(parser.Pop(), 64)
-				parser.Push(fmt.Sprintf("%.9f", math.Pow(y, x)))
+				ans := math.Pow(y, x)
+				if math.IsNaN(ans) {
+					return 0, errors.New("算术错误")
+				}
+				parser.Push(fmt.Sprintf("%.9f", ans))
 			case "#":
 				y, err := strconv.ParseFloat(parser.Pop(), 64)
 				if err != nil && isInvalidSyntax(err) {
@@ -216,13 +220,28 @@ func main() {
 				"error-msg":     err.Error(),
 			})
 		} else {
+			finalAns := ""
+			if math.IsInf(ans, 1) {
+				finalAns = "∞"
+			} else if math.IsInf(ans, -1) {
+				finalAns = "-∞"
+			}
 			timeStr := time.Now().Format("2006/01/02 - 03:04:05")
-			fmt.Println("[INFO]", timeStr, "计算结果:", ans)
-			c.JSON(http.StatusOK, gin.H{
-				"answer":        ans,
-				"corrected-exp": correctedExp,
-				"error-msg":     nil,
-			})
+			if finalAns != "" {
+				fmt.Println("[INFO]", timeStr, "计算结果:", finalAns)
+				c.JSON(http.StatusOK, gin.H{
+					"answer":        finalAns,
+					"corrected-exp": correctedExp,
+					"error-msg":     nil,
+				})
+			} else {
+				fmt.Println("[INFO]", timeStr, "计算结果:", ans)
+				c.JSON(http.StatusOK, gin.H{
+					"answer":        ans,
+					"corrected-exp": correctedExp,
+					"error-msg":     nil,
+				})
+			}
 		}
 	})
 	router.Run(":3001")
