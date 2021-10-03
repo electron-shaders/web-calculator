@@ -73,23 +73,30 @@ func preParse(tmp string) error {
 		return err
 	}
 	bracket := 0
+	dot := 0
 	if len(indexs) > 0 {
 		for i := 0; i < len(temp); i++ {
 			if i != indexs[tot][0] {
+				if string(temp[i]) == "." {
+					dot++
+				}
 				parsedExp += string(temp[i])
 			} else if string(temp[i]) == "(" {
+				dot = 0
 				bracket++
 				parsedExp += "( "
 				if tot < len(indexs)-1 {
 					tot++
 				}
 			} else if string(temp[i]) == ")" {
+				dot = 0
 				bracket--
 				parsedExp += " )"
 				if tot < len(indexs)-1 {
 					tot++
 				}
 			} else {
+				dot = 0
 				parsedExp += " " + string(temp[i]) + " "
 				if tot < len(indexs)-1 {
 					tot++
@@ -98,11 +105,20 @@ func preParse(tmp string) error {
 		}
 	} else {
 		for i := 0; i < len(temp); i++ {
+			if string(temp[i]) == "." {
+				dot++
+				if dot > 1 {
+					return errors.New("小数点过多")
+				}
+			}
 			parsedExp += string(temp[i])
 		}
 	}
-	if bracket > 0 {
-		return errors.New("括号匹配不完整")
+	if bracket != 0 {
+		return errors.New("括号匹配错误")
+	}
+	if dot > 1 {
+		return errors.New("小数点过多")
 	}
 	return nil
 }
@@ -174,7 +190,7 @@ func calc() (float64, error) {
 					y = 1
 				}
 				if x < 0 {
-					return 0, errors.New("平方根的被开方数不可为负数")
+					return 0, errors.New("算术错误")
 				}
 				parser.Push(fmt.Sprintf("%.9f", y*math.Sqrt(x)))
 			}
