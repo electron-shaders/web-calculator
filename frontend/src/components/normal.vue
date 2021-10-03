@@ -103,6 +103,10 @@
 </template>
 
 <style scoped>
+.el-input.is-disabled{
+    --el-disabled-fill-base: rgb(255,255,255);
+    --el-disabled-color-base: rgb(0,0,0);    
+}
 .el-button {
     width: 100%;
     height: 20%;
