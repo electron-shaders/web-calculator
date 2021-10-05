@@ -19,6 +19,8 @@ jobs:
         run: |
           cd ./frontend
           npm install
+          npm install sass-loader --save-dev
+          npm install node-sass --save-dev
           
       - name: Build
         run: |
