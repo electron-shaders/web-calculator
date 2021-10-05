@@ -1,0 +1,28 @@
+name: Build and Deploy to Github Pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+          
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: electron-shaders/electron-shaders.github.io
+          publish_dir: ./frontend/dist
+          publish_branch: test
+          user_name: Elycts Shaders
+          user_email: YoukuShaders@gmail.com
+          cname: demo.tangzhenwei.com
+          exclude_assets: 'element-icons.*.woff,element-icons.*.ttf'
