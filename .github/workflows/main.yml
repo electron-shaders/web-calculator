@@ -28,7 +28,9 @@ jobs:
           
       - name: Modify files for deployment
         run: |
-          cd ./frontend/dist/assets
+          cd ./frontend/dist
+          mkdir -p ./calculator/assets
+          cd ./assets
           mv ./*.js ../calculator/assets
           mv ./*.css ../calculator/assets
           cd ..
