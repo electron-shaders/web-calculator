@@ -32,7 +32,7 @@ jobs:
       - name: Modify files for deployment
         run: |
           cd ./frontend
-          mkdir -p ./dist/calculator/assets
+          mkdir -p ./dist/calculator/assets/img
           cp ./modifier.py ./dist/calculator
           cd ./dist
           mkdir -p ./calculator/assets
