@@ -11,11 +11,13 @@ https://demo.tangzhenwei.com/calculator
     ```
     cd frontend
     npm install
+    npm install sass
     npm run dev
     ```
 2. 后端
     ```
     cd backend
+    go get
     go run main.go
     ```
 ## License
