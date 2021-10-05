@@ -25,6 +25,14 @@ jobs:
         run: |
           cd ./frontend
           npm run build
+          
+      - name: Modify files for deployment
+        run: |
+          cd ./frontend/dist/assets
+          mv ./*.js ../calculator/assets
+          mv ./*.css ../calculator/assets
+          cd ..
+          mv ./index.html ./calculator
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
