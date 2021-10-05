@@ -35,6 +35,7 @@ jobs:
           mv ./*.css ../calculator/assets
           cd ..
           mv ./index.html ./calculator
+          mv ./favicon.ico ./calculator
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
