@@ -33,7 +33,7 @@ jobs:
         run: |
           cd ./frontend
           mkdir -p ./dist/calculator/assets
-          mv ./modifier.py ./dist/calculator
+          cp ./modifier.py ./dist/calculator
           cd ./dist
           mkdir -p ./calculator/assets
           cd ./assets
@@ -45,6 +45,7 @@ jobs:
           cd ./calculator
           python modifier.py
           rm modifier.py
+          mv ./null.svg ./assets/img
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
