@@ -36,4 +36,3 @@ jobs:
           user_name: Elycts Shaders
           user_email: YoukuShaders@gmail.com
           cname: demo.tangzhenwei.com
-          exclude_assets: 'element-icons.*.woff,element-icons.*.ttf'
