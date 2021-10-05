@@ -13,7 +13,10 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
         with:
-          node-version: '14.18.0'      
+          node-version: '14.18.0'
+          
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
 
       - name: Install dependencies
         run: |
@@ -28,7 +31,10 @@ jobs:
           
       - name: Modify files for deployment
         run: |
-          cd ./frontend/dist
+          cd ./frontend
+          mkdir -p ./dist/calculator/assets
+          mv ./modifier.py ./dist/calculator
+          cd ./dist
           mkdir -p ./calculator/assets
           cd ./assets
           mv ./*.js ../calculator/assets
@@ -36,6 +42,8 @@ jobs:
           cd ..
           mv ./index.html ./calculator
           mv ./favicon.ico ./calculator
+          cd ./calculator
+          python modifier.py
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
