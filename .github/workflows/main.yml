@@ -9,12 +9,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+    
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: '14.18.0'      
 
-      - name: Install and Build
+      - name: Install dependencies
         run: |
+          cd ./frontend
           npm install
-          npm run build
           
+      - name: Build
+        run: npm run build
+        
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
