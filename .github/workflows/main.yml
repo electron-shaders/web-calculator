@@ -21,7 +21,9 @@ jobs:
           npm install
           
       - name: Build
-        run: npm run build
+        run: |
+          cd ./frontend
+          npm run build
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
