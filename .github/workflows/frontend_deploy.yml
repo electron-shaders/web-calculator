@@ -53,7 +53,7 @@ jobs:
           personal_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           external_repository: electron-shaders/electron-shaders.github.io
           publish_dir: ./frontend/dist
-          publish_branch: master
+          publish_branch: calculator
           user_name: Elycts Shaders
           user_email: YoukuShaders@gmail.com
           cname: demo.tangzhenwei.com
