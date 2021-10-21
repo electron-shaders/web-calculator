@@ -22,7 +22,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd ./frontend
-          npm install npm
           npm install
           npm install sass
           
