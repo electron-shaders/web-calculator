@@ -51,7 +51,7 @@ export default {
       let answer = NaN;
       let data = { "orig-exp": newExp.origExp };
       let resHandler = (result) => {
-        console.log(result)
+        console.log(result);
         this.isLoading=false;
         errorMsg = result["error-msg"];
         correctedExp = result["corrected-exp"];
@@ -75,9 +75,7 @@ export default {
         this.isLoading=false;
         this.origExp="";
         message.clear();
-        message.alert({
-          title: '后端出错', msg: `${error}`
-        });
+        message.error(`后端出错: ${error.message}`);
       }
       message.clear();
       axios.post({

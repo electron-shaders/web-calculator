@@ -6,20 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Web Calculator</title>
     <style>
-      #app {
-        position: absolute;
-        font-size: 30px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        height: 80%;
-        width: 60%;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        border-width: auto;
-        border-radius: 10px;
-        padding: 15px;
-        vertical-align: middle;
-        text-align: center;
+      @media screen and (max-width: 395px) {
+        #app {
+          font-size: 30px;
+          height: 100%;
+          width: 100%;
+          vertical-align: middle;
+          text-align: center;
+        }
+      }
+      @media screen and (min-width: 395px) {
+        #app {
+          position: absolute;
+          font-size: 30px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          height: 80%;
+          width: 60%;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+          border-radius: 10px;
+          padding: 15px;
+          vertical-align: middle;
+          text-align: center;
+        }
       }
     </style>
   </head>
