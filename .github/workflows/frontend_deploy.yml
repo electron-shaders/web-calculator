@@ -13,7 +13,6 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
         with:
-          always-auth: true
           node-version: 'lts/*'
           check-latest: true
           
@@ -23,6 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd ./frontend
+          npm install npm
           npm install
           npm install sass
           
