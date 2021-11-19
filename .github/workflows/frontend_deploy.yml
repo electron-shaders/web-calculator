@@ -15,6 +15,9 @@ jobs:
         with:
           node-version: 'lts/*'
           check-latest: true
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
           
       - name: Install dependencies
         run: |
@@ -32,6 +35,10 @@ jobs:
           cd ./frontend
           mkdir -p ./dist/assets/img
           cp ./src/assets/img/* ./dist/assets/img
+          cp ./modifier.py ./dist
+          cd ./dist
+          python modifier.py
+          rm modifier.py
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
