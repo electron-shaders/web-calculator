@@ -51,10 +51,8 @@ jobs:
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
-          personal_token: ${{ secrets.PERSONAL_TOKEN }}
-          external_repository: electron-shaders/electron-shaders.github.io
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/dist
-          publish_branch: master
           user_name: Elycts Shaders
           user_email: YoukuShaders@gmail.com
           cname: demo.tangzhenwei.com
