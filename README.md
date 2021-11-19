@@ -1,7 +1,7 @@
 # web-calculator
 
 ## 演示网址
-http://demo.tangzhenwei.com/web-calculator/ (托管于gh-pages，加载不出~~纯属正常~~请刷新重试)
+https://demo.tangzhenwei.com/web-calculator/ (托管于gh-pages，加载不出~~纯属正常~~请刷新重试)
 
 ## 支持功能
 现支持`键盘输入模式`、`标准模式`、`历史记录`、`幂运算`、`9位小数`、`自适应布局`、`(批量)删除和复制历史记录`、`简单的自动修正`、`后端彩色日志`
