@@ -40,4 +40,3 @@ jobs:
           publish_dir: ./frontend/dist
           user_name: Elycts Shaders
           user_email: YoukuShaders@gmail.com
-          cname: demo.tangzhenwei.com
