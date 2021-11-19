@@ -16,9 +16,6 @@ jobs:
           node-version: 'lts/*'
           check-latest: true
           
-      - name: Setup Python
-        uses: actions/setup-python@v2.2.2
-
       - name: Install dependencies
         run: |
           cd ./frontend
@@ -33,20 +30,8 @@ jobs:
       - name: Modify files for deployment
         run: |
           cd ./frontend
-          mkdir -p ./dist/calculator/assets/img
-          cp ./src/assets/img/* ./dist/calculator/assets/img
-          cp ./modifier.py ./dist/calculator
-          cd ./dist
-          mkdir -p ./calculator/assets
-          cd ./assets
-          mv ./*.js ../calculator/assets
-          mv ./*.css ../calculator/assets
-          cd ..
-          mv ./index.html ./calculator
-          mv ./favicon.ico ./calculator
-          cd ./calculator
-          python modifier.py
-          rm modifier.py
+          mkdir -p ./dist/assets/img
+          cp ./src/assets/img/* ./dist/assets/img
         
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
