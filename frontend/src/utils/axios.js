@@ -33,6 +33,7 @@ if(reg.test(host)) {
 
 //axios.defaults.headers['Content-Type'] = 'application/json'
 axios.defaults.headers['Content-Type'] = 'text/plain'
+axios.defaults.headers['Access-Control-Allow-Origin'] = 'https://demo.xn--ftwm9mhr4a.com'
 axios.defaults.timeout = 3000;
 axios.defaults.withCredentials = true;
 // axios request 拦截器
