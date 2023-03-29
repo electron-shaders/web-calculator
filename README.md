@@ -1,5 +1,7 @@
 # web-calculator
 
+[![clones](https://raw.githubusercontent.com/electron-shaders/electron-shaders.github.io/traffic/traffic-web-calculator/clones.svg)](https://github.com/electron-shaders/web-calculator)
+
 ## 演示网址
 https://demo.tangzhenwei.com/web-calculator/ (托管于gh-pages，加载不出~~纯属正常~~请刷新重试)
 
