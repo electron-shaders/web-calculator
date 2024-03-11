@@ -26,7 +26,7 @@ if(reg.test(host)) {
     //若本地项目调试使用
     axios.defaults.baseURL = 'http://localhost:3001';
 } else {
-    axios.defaults.baseURL = 'https://demo.xn--ftwm9mhr4a.com';
+    axios.defaults.baseURL = 'https://demo.xn--ftwm9mhr4a.com/calculator';
 }
 //axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 //axios.defaults.transformRequest = [object => qs.stringify(object)]
